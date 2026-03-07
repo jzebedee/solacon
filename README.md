@@ -1,4 +1,4 @@
-# [Solacon](https://github.com/jzebedee/solacon)
+# [Solacon](https://github.com/jzebedee/solacon) [![NuGet Version](https://img.shields.io/nuget/v/solacon)](https://www.nuget.org/packages/Solacon/)
 
 ![solacon](assets/Solacon.svg.png)
 
@@ -11,6 +11,8 @@ The solacon is seeded with a value (string) which determines the shape, symmetry
 This implementation generates significantly (10-20%) smaller SVG files that are visually identical to the original Solacon algorithm.
 
 ## Usage
+
+Install from [NuGet](https://www.nuget.org/packages/Solacon/)
 
 ```csharp
 using Solacon;
