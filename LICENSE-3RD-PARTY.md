@@ -4,6 +4,9 @@ This project includes work derived from the following third-party project:
 
 - Solacon, copyright (c) 2022 Jon Van Oast, licensed under the MIT License
   - Source: https://github.com/naknomum/solacon
+- misaki-web/solacon, copyright (C) 2023 Misaki F., licensed under the MIT License
+  - Source: https://github.com/misaki-web/solacon
+  - Usage in this project: `solacon-examples.png`
 
 ---
 
