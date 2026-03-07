@@ -2,6 +2,7 @@
 
 using System;
 using System.Globalization;
+using System.Net;
 using System.Text;
 
 public static class SolaconGenerator
@@ -14,8 +15,12 @@ public static class SolaconGenerator
     /// An optional RGB triplet in the original solacon format, for example <c>0, 30, 255</c>.
     /// When omitted, the color is derived from the hash in the same way as <c>setRGBFromHash()</c>.
     /// </param>
+    /// <param name="includeTitle">Whether to include a <c>&lt;title&gt;</c> element in the generated SVG.</param>
+    /// <param name="title">
+    /// An optional title string to use instead of the default visual hash title. Ignored when <paramref name="includeTitle"/> is <see langword="false"/>.
+    /// </param>
     /// <returns>An SVG document string equivalent to the inline JavaScript solacon renderer.</returns>
-    public static string GenerateSvg(string seed, string? rgb = null)
+    public static string GenerateSvg(string seed, string? rgb = null, bool includeTitle = true, string? title = null)
     {
         ArgumentNullException.ThrowIfNull(seed);
 
@@ -68,14 +73,6 @@ public static class SolaconGenerator
             return path;
         }
 
-        static string EscapeXml(string value) =>
-            value
-                .Replace("&", "&amp;", StringComparison.Ordinal)
-                .Replace("<", "&lt;", StringComparison.Ordinal)
-                .Replace(">", "&gt;", StringComparison.Ordinal)
-                .Replace("\"", "&quot;", StringComparison.Ordinal)
-                .Replace("'", "&apos;", StringComparison.Ordinal);
-
         var hash = Sdbm(seed);
         var slices = (int)(hash & 0x07) + 3;
         var wedgeAngle = (Math.PI * 2d) / slices;
@@ -100,9 +97,20 @@ public static class SolaconGenerator
 
         var builder = new StringBuilder(2048);
         builder.Append("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 1000\">");
-        builder.Append("<title id=\"solacon-title\">");
-        builder.Append(EscapeXml($"A visual hash representation of the string: {hash}"));
-        builder.Append("</title>");
+        if (includeTitle)
+        {
+            builder.Append("<title>");
+            if (title is not null)
+            {
+                builder.Append(WebUtility.HtmlEncode(title));
+            }
+            else
+            {
+                builder.Append($"A visual hash representation of the string: {hash}");
+            }
+            builder.Append("</title>");
+        }
+
         builder.Append("<defs><g id=\"w\">");
 
         var angleDegrees = 360d / slices;
