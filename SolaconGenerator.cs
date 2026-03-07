@@ -39,7 +39,7 @@ public static class SolaconGenerator
             return hash;
         }
 
-        static double NiceDecimal(double value) => Math.Floor((value * 1000d) + 0.5d) / 1000d;
+        static double NiceDecimal(double value) => Math.Round(value, 3, MidpointRounding.AwayFromZero);
 
         static string Format(double value) => NiceDecimal(value).ToString("0.###", CultureInfo.InvariantCulture);
 
