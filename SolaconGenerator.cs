@@ -1,9 +1,9 @@
 #nullable enable
 
 using System;
-using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Globalization;
 
 public static class SolaconGenerator
 {
@@ -44,16 +44,14 @@ public static class SolaconGenerator
             return hash;
         }
 
-        static double NiceDecimal(double value) => Math.Round(value, 3, MidpointRounding.AwayFromZero);
-
-        static string Format(double value) => NiceDecimal(value).ToString("0.###", CultureInfo.InvariantCulture);
-
         static (double X, double Y) Point(double theta, double r) => (r * Math.Cos(theta), r * Math.Sin(theta));
 
         static string PointString((double X, double Y) point, double offsetX, double offsetY, string? command = null)
         {
             var prefix = command is null ? string.Empty : $"{command} ";
-            return $"{prefix}{Format(point.X + offsetX)} {Format(point.Y + offsetY)}";
+            NiceDecimal nx = point.X + offsetX;
+            NiceDecimal ny = point.Y + offsetY;
+            return $"{prefix}{nx} {ny}";
         }
 
         static string Bezier(double angleStart, double angleEnd, double radiusStart, double radiusEnd, double offsetX, double offsetY)
@@ -80,10 +78,10 @@ public static class SolaconGenerator
         var resolvedRgb = rgb;
         if (string.IsNullOrWhiteSpace(resolvedRgb))
         {
-            var red = NiceDecimal((((hash & 0x0Fu) / 15d) * 255d));
-            var green = NiceDecimal(((((hash >> 4) & 0x0Fu) / 15d) * 255d));
-            var blue = NiceDecimal(((((hash >> 8) & 0x0Fu) / 15d) * 255d));
-            resolvedRgb = $"{Format(red)},{Format(green)},{Format(blue)}";
+            NiceDecimal r = ((hash & 0x0Fu) / 15d) * 255d;
+            NiceDecimal g = (((hash >> 4) & 0x0Fu) / 15d) * 255d;
+            NiceDecimal b = (((hash >> 8) & 0x0Fu) / 15d) * 255d;
+            resolvedRgb = $"{r},{g},{b}";
         }
 
         var swishes = new (double Radius1, double Radius2, int Alpha)[6];
@@ -116,7 +114,7 @@ public static class SolaconGenerator
         var angleDegrees = 360d / slices;
         foreach (var swish in swishes)
         {
-            var opacity = Format(swish.Alpha / 7d);
+            var opacity = new NiceDecimal(swish.Alpha / 7d);
             var path = Bezier(0d, wedgeAngle, radius * swish.Radius1, radius * swish.Radius2, center, center);
             builder.Append("<path fill-opacity=\"");
             builder.Append(opacity);
@@ -135,7 +133,7 @@ public static class SolaconGenerator
             if (sliceIndex > 0)
             {
                 builder.Append(" transform=\"rotate(");
-                builder.Append(Format(angleDegrees * sliceIndex));
+                builder.Append(new NiceDecimal(angleDegrees * sliceIndex));
                 builder.Append(" 500 500)\"");
             }
 
@@ -144,5 +142,52 @@ public static class SolaconGenerator
 
         builder.Append("</g></svg>");
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// Represents a decimal value rounded to three fractional digits using midpoint rounding away from zero.
+    /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="NiceDecimal"/> struct.
+    /// </remarks>
+    /// <param name="value">The raw value to round.</param>
+    public readonly struct NiceDecimal(double value) : ISpanFormattable
+    {
+        private const string DefaultFormat = "0.###";
+        private readonly double _value = Math.Round(value, 3, MidpointRounding.AwayFromZero);
+
+        /// <summary>
+        /// Gets the rounded numeric value.
+        /// </summary>
+        public double Value => _value;
+
+        /// <inheritdoc />
+        public override string ToString() => _value.ToString(DefaultFormat, CultureInfo.InvariantCulture);
+
+        /// <inheritdoc />
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            var resolvedFormat = string.IsNullOrEmpty(format) ? DefaultFormat : format;
+            return _value.ToString(resolvedFormat, formatProvider ?? CultureInfo.InvariantCulture);
+        }
+
+        /// <inheritdoc />
+        public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? formatProvider)
+        {
+            var resolvedFormat = format.IsEmpty ? DefaultFormat.AsSpan() : format;
+            return _value.TryFormat(destination, out charsWritten, resolvedFormat, formatProvider ?? CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Converts a double to a <see cref="NiceDecimal"/>.
+        /// </summary>
+        /// <param name="value">The raw value.</param>
+        public static implicit operator NiceDecimal(double value) => new(value);
+
+        /// <summary>
+        /// Converts a <see cref="NiceDecimal"/> to a double.
+        /// </summary>
+        /// <param name="value">The rounded value.</param>
+        public static implicit operator double(NiceDecimal value) => value._value;
     }
 }
