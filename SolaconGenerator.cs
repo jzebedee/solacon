@@ -100,38 +100,27 @@ public static class SolaconGenerator
 
         var builder = new StringBuilder(2048);
         builder.Append("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 1000\">");
-        builder.Append("<title id=\"solacon-title\">");
+        builder.Append("<title>");
         builder.Append(EscapeXml($"A visual hash representation of the string: {hash}"));
         builder.Append("</title>");
-        builder.Append("<defs><g id=\"w\">");
-
-        var angleDegrees = 360d / slices;
-        foreach (var swish in swishes)
-        {
-            var opacity = Format(swish.Alpha / 7d);
-            var path = Bezier(0d, wedgeAngle, radius * swish.Radius1, radius * swish.Radius2, center, center);
-            builder.Append("<path fill-opacity=\"");
-            builder.Append(opacity);
-            builder.Append("\" d=\"");
-            builder.Append(path);
-            builder.Append("\" />");
-        }
-
-        builder.Append("</g></defs><g fill=\"rgb(");
+        builder.Append("<g fill=\"rgb(");
         builder.Append(resolvedRgb);
         builder.Append(")\">");
 
         for (var sliceIndex = 0; sliceIndex < slices; sliceIndex++)
         {
-            builder.Append("<use href=\"#w\"");
-            if (sliceIndex > 0)
+            var angleStart = wedgeAngle * sliceIndex;
+            var angleEnd = wedgeAngle * (sliceIndex + 1);
+            foreach (var swish in swishes)
             {
-                builder.Append(" transform=\"rotate(");
-                builder.Append(Format(angleDegrees * sliceIndex));
-                builder.Append(" 500 500)\"");
+                var opacity = Format(swish.Alpha / 7d);
+                var path = Bezier(angleStart, angleEnd, radius * swish.Radius1, radius * swish.Radius2, center, center);
+                builder.Append("<path fill-opacity=\"");
+                builder.Append(opacity);
+                builder.Append("\" d=\"");
+                builder.Append(path);
+                builder.Append("\" />");
             }
-
-            builder.Append(" />");
         }
 
         builder.Append("</g></svg>");
