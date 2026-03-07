@@ -2,13 +2,13 @@
 
 ![solacon](assets/Solacon.svg.png)
 
-This package is a .NET implementation of the *Solacon* algorithm. A *solacon* is a variation of an [identicon](https://en.wikipedia.org/wiki/Identicon), in the form of a solar/spiral/floral shape.
-
-This is also known as a "visual hash".
+This package is a .NET implementation of the *Solacon* algorithm. A *solacon* is a variation of an [identicon](https://en.wikipedia.org/wiki/Identicon), a visual hash in the form of a solar/spiral/floral shape.
 
 The solacon is seeded with a value (string) which determines the shape, symmetry, and shades of the image.
 
 ![solacon examples](assets/solacon-examples.png)
+
+This implementation generates significantly (10-20%) smaller SVG files that are visually identical to the original Solacon algorithm.
 
 ## Usage
 
