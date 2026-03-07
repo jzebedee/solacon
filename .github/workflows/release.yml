@@ -37,9 +37,9 @@ jobs:
         run: >
           dotnet pack ./Solacon.csproj
           -c Release
+          -o pack/
           --no-restore
           -p:Version=${{ env.PACKAGE_VERSION }}
-          -p:PackageVersion=${{ env.PACKAGE_VERSION }}
 
       - name: Create or update GitHub release
         shell: bash
@@ -47,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
-          package="bin/Release/Solacon.${PACKAGE_VERSION}.nupkg"
+          package="pack/Solacon.${PACKAGE_VERSION}.nupkg"
 
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$package" --clobber
@@ -57,7 +57,7 @@ jobs:
 
       - name: Publish to NuGet
         run: >
-          dotnet nuget push bin/Release/Solacon.${{ env.PACKAGE_VERSION }}.nupkg
+          dotnet nuget push pack/Solacon.${{ env.PACKAGE_VERSION }}.nupkg
           --api-key ${{ secrets.NUGET_TOKEN }}
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
