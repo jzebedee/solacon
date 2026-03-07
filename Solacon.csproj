@@ -6,7 +6,7 @@
     <PackageId>Solacon</PackageId>
     <Title>Solacon</Title>
     <Description>Deterministic SVG solacon generator.</Description>
-    <PackageTags>svg;identicon;avatar;visual-hash</PackageTags>
+    <PackageTags>solacon;identicon;svg;avatar;visual-hash</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
