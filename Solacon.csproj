@@ -9,11 +9,14 @@
     <PackageTags>svg;identicon;avatar;visual-hash</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Copyright>Copyright (c) J. Zebedee</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
+    <Copyright>Copyright (c) 2026 J. Zebedee</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="assets\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
+    <None Include="LICENSE.md" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="LICENSE-3RD-PARTY.md" Pack="true" PackagePath="\" />
   </ItemGroup>
