@@ -1,3 +1,12 @@
+# Third-Party Notices
+
+This project includes work derived from the following third-party project:
+
+- Solacon, copyright (c) 2022 Jon Van Oast, licensed under the MIT License
+  - Source: https://github.com/naknomum/solacon
+
+---
+
 MIT License
 
 Copyright (c) 2022 Jon Van Oast
