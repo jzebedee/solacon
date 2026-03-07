@@ -1,4 +1,4 @@
-# Solacon
+# [Solacon](https://github.com/jzebedee/solacon)
 
 ![solacon](assets/Solacon.svg.png)
 

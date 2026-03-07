@@ -10,6 +10,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/jzebedee/solacon</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jzebedee/solacon</RepositoryUrl>
     <Copyright>Copyright (c) 2026 J. Zebedee</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
