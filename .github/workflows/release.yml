@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    env:
+      DOTNET_NOLOGO: true
+      PACKAGE_VERSION: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Derive package version
+        shell: bash
+        run: |
+          version="${PACKAGE_VERSION#v}"
+          echo "PACKAGE_VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Restore
+        run: dotnet restore ./Solacon.csproj
+
+      - name: Pack
+        run: >
+          dotnet pack ./Solacon.csproj
+          -c Release
+          --no-restore
+          -p:Version=${{ env.PACKAGE_VERSION }}
+          -p:PackageVersion=${{ env.PACKAGE_VERSION }}
+
+      - name: Create or update GitHub release
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          package="bin/Release/Solacon.${PACKAGE_VERSION}.nupkg"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$package" --clobber
+          else
+            gh release create "$tag" "$package" --title "$tag" --generate-notes --verify-tag
+          fi
+
+      - name: Publish to NuGet
+        run: >
+          dotnet nuget push bin/Release/Solacon.${{ env.PACKAGE_VERSION }}.nupkg
+          --api-key ${{ secrets.NUGET_TOKEN }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
