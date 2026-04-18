@@ -40,4 +40,3 @@ var svg = SolaconGenerator.GenerateSvg(
 
 This package is based on the [Solacon project by Jon Van Oast](https://github.com/naknomum/solacon).
 - See [LICENSE-3RD-PARTY.md](LICENSE-3RD-PARTY.md) for the third-party notice and original MIT license text.
-
